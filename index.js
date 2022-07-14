@@ -10,36 +10,9 @@ app.set("appName", "Fazt Express");
 app.use(express.json()); //para que entienda el json
 app.use(morgan("dev"));
 
-//Routs
-// app.all('/user', (req, res, next) => {
-// console.log('Paso por aca');
-//     next();
-// });
-
 app.get("/", (req, res) => {
   const data = [{ name: "John" }, { name: "Joe" }, { name: "Cameron" }];
   res.render("index.ejs", { people: data });
-});
-
-app.get("/user", (req, res) => {
-  res.json({
-    usernmae: "Cameron",
-    lastnmae: "Howe",
-  });
-});
-
-app.post("/user/:id", (req, res) => {
-  console.log(req.body);
-  console.log(req.params);
-  res.send("POST REQUEST RECEIVED");
-});
-
-app.put("/user/:id", (req, res) => {
-  res.send(`User ${req.params.id} update`);
-});
-
-app.delete("/user/:userId", (req, res) => {
-  res.send(`User ${req.params.userId} deleted`);
 });
 
 app.use(express.static("public"));
@@ -56,7 +29,10 @@ app.post("/api/modo-checkout", async (req, res) => {
 })
 
 const BASE_URL_MODO = 'https://merchants.playdigital.com.ar';
+// const BASE_URL_MODO = 'https://merchants.playdigital.com.ar';
 const STORE_ID = '{STORE_ID}';
+const CLIENT_ID = '{CLIENT_ID}';
+const CLIENT_SECRET = '{CLIENT_SECRET}';
 
 // Create Payment Intention
 const createPaymentIntention = async (req) => {
@@ -86,10 +62,6 @@ const createPaymentIntention = async (req) => {
 
   return response.data;
 };
-
-// const BASE_URL_MODO = 'https://merchants.playdigital.com.ar';
-const CLIENT_ID = '{CLIENT_ID}';
-const CLIENT_SECRET = '{CLIENT_SECRET}';
 
 // Create Access Token
 const generateAccessToken = async () => {
