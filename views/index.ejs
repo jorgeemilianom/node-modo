@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Ejs template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script>
+    <script src="https://ecommerce-modal.modo.com.ar/bundle.js"></script>
+  </head>
+  <body>
+    <button class="button-primary" onclick="showModal()">
+      <span>Pago con MODO</span>
+    </button>
+  </body>
+  <script>
+    async function getPaymentIntention() {
+      //   const res = await fetch("http://localhost:4000/api/modo-checkout", {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify({ price: 77 }),
+      //   });
+
+      //   const jsonRes = await res.json();
+      return {
+        createdAt: "2022-07-14T14:44:38.381Z",
+        expirationAt: 999000000,
+        productName: "Producto botón de pago",
+        price: 77,
+        quantity: 1,
+        storeId: "a32ccfce-561b-4543-b62e-0225aee702a8",
+        externalIntentionId: 123,
+        status: "CREATED",
+        qrString:
+          "00020101021226540019ar.com.modo.decidir0127T00Im5LUDxxkPzUajblxXtI5HT35204900153030325402775802AR5910STORENAME26007example62700308999999990522qPHxuFL76rE5YWjjhYhLhe0811WOOCOMMERCE1006123456110352263047A5A",
+        paymentId: null,
+        checkoutId: "c904e306-967c-4b1c-934f-188cca84215d",
+        deeplink: "https://www.modo.com.ar/pagar/",
+      };
+    }
+
+    async function showModal() {
+      const modalData = await getPaymentIntention();
+      var modalObject = {
+        qrString: modalData.qrString,
+        checkoutId: modalData.checkoutId,
+        deeplink: {
+          url: modalData.deeplink,
+          callbackURL: "http://localhost:4000/checkout",
+          callbackURLSuccess: "http://localhost:4000/thankyou",
+        },
+        onSuccess: function () {
+          console.log("onSuccess");
+        },
+        onFailure: function () {
+          console.log("onFailure");
+        },
+        onCancel: function () {
+          console.log("onCancel");
+        },
+        refreshData: getPaymentIntention,
+        callbackURL: "http://localhost:4000/thankyou",
+      };
+
+      ModoSDK.modoInitPayment(modalObject);
+    }
+  </script>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Home de la página</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+
+    <link rel="stylesheet" href="css/main.css" />
+    <script src="https://ecommerce-modal.modo.com.ar/bundle.js"></script>
+  </head>
+  <body>
+    <button class="button-primary" onclick="showModal()">
+      <span>Pago con MODO</span>
+    </button>
+
+    <script src="/js/main.js"></script>
+
+    <script>
+      async function getPaymentIntention() {
+        const res = await fetch(
+          "https://tiendadeprueba.com/api/modo-checkout",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ price: 77 }),
+          }
+        );
+
+        const jsonRes = await res.json();
+        return {
+          checkoutId: jsonRes.id,
+          qrString: jsonRes.qr,
+          deeplink: jsonRes.deeplink,
+        };
+      }
+
+      async function showModal() {
+        const modalData = await getPaymentIntention();
+        var modalObject = {
+          qrString: modalData.qrString,
+          checkoutId: modalData.checkoutId,
+          deeplink: {
+            url: modalData.deeplink,
+            callbackURL: "https://tiendadeprueba.com/checkout",
+            callbackURLSuccess: "https://tiendadeprueba/thankyou",
+          },
+          onSuccess: function () {
+            console.log("onSuccess");
+          },
+          onFailure: function () {
+            console.log("onFailure");
+          },
+          onCancel: function () {
+            console.log("onCancel");
+          },
+          refreshData: getPaymentIntention,
+          callbackURL: "https://tiendadeprueba.com/thankyou",
+        };
+
+        ModoSDK.modoInitPayment(modalObject);
+      }
+    </script>
+  </body>
+</html>
